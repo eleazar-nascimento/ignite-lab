@@ -1,13 +1,20 @@
-import { getSession, useUser, withPageAuthRequired } from "@auth0/nextjs-auth0"
+import { getAccessToken, getSession, useUser, withPageAuthRequired } from "@auth0/nextjs-auth0"
 import { GetServerSideProps } from "next"
 
-export default function Home() {
+interface HomeProps {
+    token: any;
+}
+
+export default function Home({ token }: HomeProps) {
     const { user } = useUser()
     return (
     <div>
         <h1>Hello World</h1>
         <pre>
             {JSON.stringify(user, null, 2)}
+        </pre>
+        <pre>
+            Token: {JSON.stringify(token.accessToken, null, 2)}
         </pre>
         <a href="/api/auth/logout">Logout</a>
     </div>
@@ -16,21 +23,30 @@ export default function Home() {
     )
 }
 
-// export const getServerSideProps = withPageAuthRequired();
-export const getServerSideProps: GetServerSideProps = async ({req, res }) => {
-    const session = getSession(req, res);
-    console.log(session);
-    if(!session) {
+export const getServerSideProps = withPageAuthRequired({
+    getServerSideProps: async ({ req, res }) => {
+        const token = await getAccessToken(req, res)
         return {
-            redirect: {
-                destination: '/api/auth/login',
-                permanent: false,
+            props: {
+                token
             }
         }
     }
+});
+// export const getServerSideProps: GetServerSideProps = async ({req, res }) => {
+//     const session = getSession(req, res);
+//     console.log(session);
+//     if(!session) {
+//         return {
+//             redirect: {
+//                 destination: '/api/auth/login',
+//                 permanent: false,
+//             }
+//         }
+//     }
 
-    return {
-        props: {}
-    }
+//     return {
+//         props: {}
+//     }
 
-}
+// }
