@@ -1,9 +1,20 @@
+import { gql } from "@apollo/client";
 import { getAccessToken, getSession, useUser, withPageAuthRequired } from "@auth0/nextjs-auth0"
 import { GetServerSideProps } from "next"
 
 interface HomeProps {
     token: any;
 }
+
+const PRODUCTS_QUERY = gql`
+    query GetProducts {
+        products {
+            id
+            title
+        }
+    }
+
+`;
 
 export default function Home({ token }: HomeProps) {
     const { user } = useUser()
