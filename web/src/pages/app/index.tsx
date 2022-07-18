@@ -1,6 +1,5 @@
-import { gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { getAccessToken, getSession, useUser, withPageAuthRequired } from "@auth0/nextjs-auth0"
-import { GetServerSideProps } from "next"
 
 interface HomeProps {
     token: any;
@@ -18,9 +17,12 @@ const PRODUCTS_QUERY = gql`
 
 export default function Home({ token }: HomeProps) {
     const { user } = useUser()
+    const {data, error} = useQuery(PRODUCTS_QUERY);
+
     return (
     <div>
         <h1>Hello World</h1>
+        <pre>{JSON.stringify(data , null, 2)}</pre>
         <pre>
             {JSON.stringify(user, null, 2)}
         </pre>
